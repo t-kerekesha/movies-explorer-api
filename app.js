@@ -3,15 +3,21 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const BadRequestError = require('./errors/BadRequestError');
 const { errorHandler } = require('./middlewares/errorHandler');
 const routes = require('./routes/routes');
 const { PORT, MONGO_URL } = require('./utils/config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { rateLimiter } = require('./middlewares/rateLimiter');
 
 const app = express();
 
 app.use(cookieParser());
+
+app.use(rateLimiter);
+
+app.use(helmet());
 
 app.use(cors({
   origin: ['http://localhost:3001', 'https://awesome.nomoredomains.work'],
