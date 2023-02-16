@@ -99,8 +99,8 @@ module.exports.validateCreateMovieBody = celebrate({
       'string.empty': 'Поле не может быть пустым',
       'any.required': 'Необходимо указать ссылку на миниатюрное изображение постера к фильму',
     }),
-    movieId: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
+    movieId: Joi.number().required().messages({
+      'number.base': 'Id фильма не является числом',
       'any.required': 'Необходимо указать id фильма',
     }),
     nameRU: Joi.string().required().messages({

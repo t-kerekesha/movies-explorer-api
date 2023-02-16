@@ -7,6 +7,7 @@ const BadRequestError = require('./errors/BadRequestError');
 const { errorHandler } = require('./middlewares/errorHandler');
 const routes = require('./routes/routes');
 const { PORT, MONGO_URL } = require('./utils/config');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
@@ -28,7 +29,11 @@ app.use(express.json({
   },
 }));
 
+app.use(requestLogger); // логгер запросов
+
 app.use('/', routes); // роуты
+
+app.use(errorLogger); // логгер ошибок
 
 app.use(errorHandler); // централизованный обработчик ошибок и ошибок celebrate
 
