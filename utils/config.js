@@ -1,5 +1,5 @@
 const {
-  PORT = 3005, // cлушаем 3000 порт
+  PORT = 3000, // cлушаем 3000 порт
   MONGO_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb',
 } = process.env;
 
