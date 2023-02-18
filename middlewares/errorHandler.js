@@ -17,7 +17,7 @@ module.exports.errorHandler = (error, request, response, next) => {
 
   response.status(statusCode).send({
     message: statusCode === 500
-      ? MESSAGE_SERVER_ERROR + error.name + error.message // Обработка ошибок по умолчанию
+      ? `${MESSAGE_SERVER_ERROR} ${error.name} ${error.message}` // Обработка ошибок по умолчанию
       : message,
   });
 

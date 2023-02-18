@@ -36,7 +36,7 @@ module.exports.createUser = (request, response, next) => {
     }))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_DATA_SENT} ${error.message}`));
       } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
         next(new ConflictError(MESSAGE_USER_EXISTS));
       } else {
@@ -81,7 +81,7 @@ module.exports.getUser = (request, response, next) => {
     .then((user) => response.status(STATUS_CODE_OK).send(user))
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(MESSAGE_INVALID_ID + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_ID} ${error.message}`));
       } else {
         next(error);
       }
@@ -104,9 +104,9 @@ module.exports.updateUser = (request, response, next) => {
     .then((user) => response.status(STATUS_CODE_OK).send(user))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_DATA_SENT} ${error.message}`));
       } else if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(MESSAGE_INVALID_ID + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_ID} ${error.message}`));
       } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
         next(new ConflictError(MESSAGE_USER_EXISTS));
       } else {

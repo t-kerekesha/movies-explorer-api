@@ -27,7 +27,7 @@ module.exports.createMovie = (request, response, next) => {
     .then((movie) => response.status(STATUS_CODE_CREATED).send(movie))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_DATA_SENT} ${error.message}`));
       } else {
         next(error);
       }
@@ -49,7 +49,7 @@ module.exports.deleteMovie = (request, response, next) => {
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
+        next(new BadRequestError(`${MESSAGE_INVALID_DATA_SENT} ${error.message}`));
       } else {
         next(error);
       }
