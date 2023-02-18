@@ -1,22 +1,47 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
+const {
+  VALIDATION_MESSAGE_MIN_LENGTH,
+  VALIDATION_MESSAGE_MAX_LENGTH,
+  VALIDATION_MESSAGE_EMPTY,
+  VALIDATION_MESSAGE_NAME_REQUIRED,
+  VALIDATION_MESSAGE_INVALID_EMAIL,
+  VALIDATION_MESSAGE_EMAIL_REQUIRED,
+  VALIDATION_MESSAGE_PASSWORD_REQUIRED,
+  VALIDATION_MESSAGE_COUNTRY_REQUIRED,
+  VALIDATION_MESSAGE_DIRECTOR_REQUIRED,
+  VALIDATION_MESSAGE_DURATION_NOT_NUMBER,
+  VALIDATION_MESSAGE_DURATION_REQUIRED,
+  VALIDATION_MESSAGE_YEAR_REQUIRED,
+  VALIDATION_MESSAGE_DESCRIPTION_REQUIRED,
+  VALIDATION_MESSAGE_INVALID_URL,
+  VALIDATION_MESSAGE_IMAGE_REQUIRED,
+  VALIDATION_MESSAGE_TRAILER_REQUIRED,
+  VALIDATION_MESSAGE_THUMBNAIL_REQUIRED,
+  VALIDATION_MESSAGE_MOVIE_ID_NOT_NUMBER,
+  VALIDATION_MESSAGE_MOVIE_ID_REQUIRED,
+  VALIDATION_MESSAGE_NAME_RU_REQUIRED,
+  VALIDATION_MESSAGE_NAME_EN_REQUIRED,
+  VALIDATION_MESSAGE_INVALID_MOVIE_ID,
+} = require('../utils/constants');
 
 module.exports.validateCreateUserBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required()
       .messages({
-        'string.min': 'Минимальная длина поля - 2 символа',
-        'string.max': 'Максимальная длина поля - 30 символов',
-        'string.empty': 'Поле не может быть пустым',
-        'any.required': 'Необходимо указать имя пользователя',
+        'string.min': VALIDATION_MESSAGE_MIN_LENGTH,
+        'string.max': VALIDATION_MESSAGE_MAX_LENGTH,
+        'string.empty': VALIDATION_MESSAGE_EMPTY,
+        'any.required': VALIDATION_MESSAGE_NAME_REQUIRED,
       }),
     email: Joi.string().email().required().messages({
-      'string.email': 'Некорректный email',
-      'any.required': 'Необходимо указать email',
+      'string.email': VALIDATION_MESSAGE_INVALID_EMAIL,
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_EMAIL_REQUIRED,
     }),
     password: Joi.string().required().messages({
-      'string.empty': 'Пароль не может быть пустым',
-      'any.required': 'Необходимо ввести пароль',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_PASSWORD_REQUIRED,
     }),
   }),
 });
@@ -24,12 +49,13 @@ module.exports.validateCreateUserBody = celebrate({
 module.exports.validateLoginBody = celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required().messages({
-      'string.email': 'Некорректный email',
-      'any.required': 'Необходимо указать email',
+      'string.email': VALIDATION_MESSAGE_INVALID_EMAIL,
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_EMAIL_REQUIRED,
     }),
     password: Joi.string().required().messages({
-      'string.empty': 'Пароль не может быть пустым',
-      'any.required': 'Необходимо ввести пароль',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_PASSWORD_REQUIRED,
     }),
   }),
 });
@@ -38,14 +64,15 @@ module.exports.validateUpdateUserBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required()
       .messages({
-        'string.min': 'Минимальная длина поля - 2 символа',
-        'string.max': 'Максимальная длина поля - 30 символов',
-        'string.empty': 'Поле не может быть пустым',
-        'any.required': 'Необходимо указать имя пользователя',
+        'string.min': VALIDATION_MESSAGE_MIN_LENGTH,
+        'string.max': VALIDATION_MESSAGE_MAX_LENGTH,
+        'string.empty': VALIDATION_MESSAGE_EMPTY,
+        'any.required': VALIDATION_MESSAGE_NAME_REQUIRED,
       }),
     email: Joi.string().email().required().messages({
-      'string.email': 'Некорректный email',
-      'any.required': 'Необходимо указать email',
+      'string.email': VALIDATION_MESSAGE_INVALID_EMAIL,
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_EMAIL_REQUIRED,
     }),
   }),
 });
@@ -53,63 +80,63 @@ module.exports.validateUpdateUserBody = celebrate({
 module.exports.validateCreateMovieBody = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать страну создания фильма',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_COUNTRY_REQUIRED,
     }),
     director: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать режиссера фильма',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_DIRECTOR_REQUIRED,
     }),
     duration: Joi.number().required().messages({
-      'number.base': 'Значение длительности фильма не является числом',
-      'any.required': 'Необходимо указать длительность фильма',
+      'number.base': VALIDATION_MESSAGE_DURATION_NOT_NUMBER,
+      'any.required': VALIDATION_MESSAGE_DURATION_REQUIRED,
     }),
     year: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать год выпуска фильма',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_YEAR_REQUIRED,
     }),
     description: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать описание фильма',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_DESCRIPTION_REQUIRED,
     }),
     image: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Не валидный url-адрес');
+      return helpers.message(VALIDATION_MESSAGE_INVALID_URL);
     }).messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать ссылку на постер к фильму',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_IMAGE_REQUIRED,
     }),
     trailerLink: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Не валидный url-адрес');
+      return helpers.message(VALIDATION_MESSAGE_INVALID_URL);
     }).messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать ссылку на трейлер фильма',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_TRAILER_REQUIRED,
     }),
     thumbnail: Joi.string().required().custom((value, helpers) => {
       if (validator.isURL(value)) {
         return value;
       }
-      return helpers.message('Не валидный url-адрес');
+      return helpers.message(VALIDATION_MESSAGE_INVALID_URL);
     }).messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать ссылку на миниатюрное изображение постера к фильму',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_THUMBNAIL_REQUIRED,
     }),
     movieId: Joi.number().required().messages({
-      'number.base': 'Id фильма не является числом',
-      'any.required': 'Необходимо указать id фильма',
+      'number.base': VALIDATION_MESSAGE_MOVIE_ID_NOT_NUMBER,
+      'any.required': VALIDATION_MESSAGE_MOVIE_ID_REQUIRED,
     }),
     nameRU: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать название фильма на русском языке',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_NAME_RU_REQUIRED,
     }),
     nameEN: Joi.string().required().messages({
-      'string.empty': 'Поле не может быть пустым',
-      'any.required': 'Необходимо указать название фильма на английском языке',
+      'string.empty': VALIDATION_MESSAGE_EMPTY,
+      'any.required': VALIDATION_MESSAGE_NAME_EN_REQUIRED,
     }),
   }),
 });
@@ -118,8 +145,8 @@ module.exports.validateDeleteMovieParams = celebrate({
   params: Joi.object().keys({
     movieId: Joi.string().required().length(24).hex()
       .messages(({
-        'string.hex': 'Невалидный id фильма',
-        'string.length': 'Невалидный id фильма',
+        'string.hex': VALIDATION_MESSAGE_INVALID_MOVIE_ID,
+        'string.length': VALIDATION_MESSAGE_INVALID_MOVIE_ID,
       })),
   }),
 });
