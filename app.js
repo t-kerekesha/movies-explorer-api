@@ -6,16 +6,13 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const BadRequestError = require('./errors/BadRequestError');
 const { errorHandler } = require('./middlewares/errorHandler');
-const routes = require('./routes/routes');
+const routes = require('./routes/index');
 const { PORT, MONGO_URL } = require('./utils/config');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { rateLimiter } = require('./middlewares/rateLimiter');
+const { MESSAGE_SYNTAX_ERROR } = require('./utils/constants');
 
 const app = express();
-
-app.use(cookieParser());
-
-app.use(rateLimiter);
 
 app.use(helmet());
 
@@ -25,17 +22,21 @@ app.use(cors({
   maxAge: 30,
 }));
 
+app.use(cookieParser());
+
 app.use(express.json({
   verify: (request, response, buffer) => {
     try {
       JSON.parse(buffer);
     } catch (error) {
-      throw new BadRequestError('Переданные данные содержат синтаксическую ошибку');
+      throw new BadRequestError(MESSAGE_SYNTAX_ERROR);
     }
   },
 }));
 
 app.use(requestLogger); // логгер запросов
+
+app.use(rateLimiter);
 
 app.use('/', routes); // роуты
 

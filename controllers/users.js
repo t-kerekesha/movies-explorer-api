@@ -6,7 +6,16 @@ const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const User = require('../models/user');
 const {
-  STATUS_CODE_OK, SOLT_ROUNDS, STATUS_CODE_CREATED, MONGO_DUPLICATE_ERROR_CODE,
+  SOLT_ROUNDS,
+  STATUS_CODE_OK,
+  STATUS_CODE_CREATED,
+  MONGO_DUPLICATE_ERROR_CODE,
+  MESSAGE_INVALID_DATA_SENT,
+  MESSAGE_USER_EXISTS,
+  MESSAGE_INCORRECT_EMAIL_OR_PASSWORD,
+  MESSAGE_USER_IS_NOT_FOUND,
+  MESSAGE_INVALID_ID,
+  MESSAGE_LOGOUT,
 } = require('../utils/constants');
 const { generateToken } = require('../utils/generateToken');
 
@@ -27,9 +36,9 @@ module.exports.createUser = (request, response, next) => {
     }))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(`Переданы некорректные данные при создании пользователя: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
       } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
+        next(new ConflictError(MESSAGE_USER_EXISTS));
       } else {
         next(error);
       }
@@ -41,12 +50,12 @@ module.exports.login = (request, response, next) => {
   const { email, password } = request.body;
 
   User.findOne({ email }).select('+password')
-    .orFail(new UnauthorizedError('Неправильные email или пароль'))
+    .orFail(new UnauthorizedError(MESSAGE_INCORRECT_EMAIL_OR_PASSWORD))
     .then((user) => {
       bcrypt.compare(password, user.password) // сравнивнение пароля и хеша из базы
         .then((matched) => {
           if (!matched) {
-            throw new UnauthorizedError('Неправильные email или пароль');
+            throw new UnauthorizedError(MESSAGE_INCORRECT_EMAIL_OR_PASSWORD);
           }
 
           const token = generateToken({ _id: user._id });
@@ -68,11 +77,11 @@ module.exports.login = (request, response, next) => {
 // Возвращение информации о пользователе (email и имя)
 module.exports.getUser = (request, response, next) => {
   User.findById(request.user._id)
-    .orFail(new NotFoundError('Пользователь не найден'))
+    .orFail(new NotFoundError(MESSAGE_USER_IS_NOT_FOUND))
     .then((user) => response.status(STATUS_CODE_OK).send(user))
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(`Некорректный id: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_ID + error.message));
       } else {
         next(error);
       }
@@ -91,13 +100,15 @@ module.exports.updateUser = (request, response, next) => {
       runValidators: true, // валидировать новые данные перед записью в базу
     },
   )
-    .orFail(new NotFoundError('Пользователь с указанным id не найден'))
+    .orFail(new NotFoundError(MESSAGE_USER_IS_NOT_FOUND))
     .then((user) => response.status(STATUS_CODE_OK).send(user))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(`Переданы некорректные данные при обновлении профиля: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
       } else if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(`Некорректный id: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_ID + error.message));
+      } else if (error.code === MONGO_DUPLICATE_ERROR_CODE) {
+        next(new ConflictError(MESSAGE_USER_EXISTS));
       } else {
         next(error);
       }
@@ -108,5 +119,5 @@ module.exports.updateUser = (request, response, next) => {
 module.exports.logout = (request, response) => {
   response.status(STATUS_CODE_OK)
     .clearCookie('jwt')
-    .send({ message: 'Успешный выход из учетной записи' });
+    .send({ message: MESSAGE_LOGOUT });
 };

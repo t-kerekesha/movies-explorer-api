@@ -3,11 +3,18 @@ const BadRequestError = require('../errors/BadRequestError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 const Movie = require('../models/movie');
-const { STATUS_CODE_OK, STATUS_CODE_CREATED } = require('../utils/constants');
+const {
+  STATUS_CODE_OK,
+  STATUS_CODE_CREATED,
+  MESSAGE_INVALID_DATA_SENT,
+  MESSAGE_MOVIE_NOT_FOUND,
+  MESSAGE_FORBIDDEN_TO_DELETE,
+  MESSAGE_MOVIE_DELETED,
+} = require('../utils/constants');
 
 // Возвращение всех сохраненных текущим  пользователем фильмов
-module.exports.getMovies = (request, response, next) => {
-  Movie.find({})
+module.exports.getUserMovies = (request, response, next) => {
+  Movie.find({ owner: request.user })
     .populate('owner')
     .then((movies) => response.status(STATUS_CODE_OK).send(movies))
     .catch(next);
@@ -15,39 +22,12 @@ module.exports.getMovies = (request, response, next) => {
 
 // Создание фильма
 module.exports.createMovie = (request, response, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    thumbnail,
-    movieId,
-    nameRU,
-    nameEN,
-  } = request.body;
-
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    thumbnail,
-    owner: request.user._id,
-    movieId,
-    nameRU,
-    nameEN,
-  })
+  Movie.create({ ...request.body, owner: request.user._id })
     .then((movie) => Movie.populate(movie, { path: 'owner' }))
     .then((movie) => response.status(STATUS_CODE_CREATED).send(movie))
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError(`Переданы некорректные данные при создании фильма: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
       } else {
         next(error);
       }
@@ -57,19 +37,19 @@ module.exports.createMovie = (request, response, next) => {
 // Удаление сохраненного фильма по id
 module.exports.deleteMovie = (request, response, next) => {
   Movie.findById(request.params.movieId)
-    .orFail(new NotFoundError('Фильм с указанным id не найден'))
+    .orFail(new NotFoundError(MESSAGE_MOVIE_NOT_FOUND))
     .then((movie) => {
       if (request.user._id !== movie.owner._id.toString()) {
-        throw new ForbiddenError('Удалять фильмы других пользователей нельзя');
+        throw new ForbiddenError(MESSAGE_FORBIDDEN_TO_DELETE);
       }
 
       Movie.findByIdAndRemove(request.params.movieId)
-        .then(() => response.status(STATUS_CODE_OK).send({ message: 'Фильм удалён' }))
+        .then(() => response.status(STATUS_CODE_OK).send({ message: MESSAGE_MOVIE_DELETED }))
         .catch(next);
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
-        next(new BadRequestError(`Переданы некорректные данные: ${error.message}`));
+        next(new BadRequestError(MESSAGE_INVALID_DATA_SENT + error.message));
       } else {
         next(error);
       }

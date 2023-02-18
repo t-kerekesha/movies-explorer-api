@@ -1,4 +1,5 @@
 const { CelebrateError } = require('celebrate');
+const { MESSAGE_SERVER_ERROR } = require('../utils/constants');
 
 module.exports.errorHandler = (error, request, response, next) => {
   if (error instanceof CelebrateError) {
@@ -16,7 +17,7 @@ module.exports.errorHandler = (error, request, response, next) => {
 
   response.status(statusCode).send({
     message: statusCode === 500
-      ? `На сервере произошла ошибка ${error.name}: ${error.message}` // Обработка ошибок по умолчанию
+      ? MESSAGE_SERVER_ERROR + error.name + error.message // Обработка ошибок по умолчанию
       : message,
   });
 
