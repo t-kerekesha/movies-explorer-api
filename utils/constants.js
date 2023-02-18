@@ -1,0 +1,43 @@
+module.exports.SOLT_ROUNDS = 10;
+
+module.exports.STATUS_CODE_OK = 200;
+module.exports.STATUS_CODE_CREATED = 201;
+module.exports.MONGO_DUPLICATE_ERROR_CODE = 11000;
+
+module.exports.MESSAGE_INVALID_DATA_SENT = 'Переданы некорректные данные';
+module.exports.MESSAGE_USER_EXISTS = 'Пользователь с таким email уже существует';
+module.exports.MESSAGE_INCORRECT_EMAIL_OR_PASSWORD = 'Неправильные email или пароль';
+module.exports.MESSAGE_USER_IS_NOT_FOUND = 'Пользователь не найден';
+module.exports.MESSAGE_INVALID_ID = 'Некорректный id';
+module.exports.MESSAGE_LOGOUT = 'Успешный выход из учетной записи';
+module.exports.MESSAGE_MOVIE_NOT_FOUND = 'Фильм не найден';
+module.exports.MESSAGE_FORBIDDEN_TO_DELETE = 'Удалять фильмы других пользователей нельзя';
+module.exports.MESSAGE_MOVIE_DELETED = 'Фильм удалён';
+module.exports.MESSAGE_AUTHORIZATION_REQUIRED = 'Необходима авторизация';
+module.exports.MESSAGE_INVALID_TOKEN = 'Неверный токен';
+module.exports.MESSAGE_INCORRECT_PATH = 'Неверный путь';
+module.exports.MESSAGE_SERVER_ERROR = 'На сервере произошла ошибка';
+module.exports.MESSAGE_SYNTAX_ERROR = 'Переданные данные содержат синтаксическую ошибку';
+
+module.exports.VALIDATION_MESSAGE_MIN_LENGTH = 'Минимальная длина поля - 2 символа';
+module.exports.VALIDATION_MESSAGE_MAX_LENGTH = 'Максимальная длина поля - 30 символов';
+module.exports.VALIDATION_MESSAGE_EMPTY = 'Поле не может быть пустым';
+module.exports.VALIDATION_MESSAGE_NAME_REQUIRED = 'Необходимо указать имя пользователя';
+module.exports.VALIDATION_MESSAGE_INVALID_EMAIL = 'Некорректный email';
+module.exports.VALIDATION_MESSAGE_EMAIL_REQUIRED = 'Необходимо указать email';
+module.exports.VALIDATION_MESSAGE_PASSWORD_REQUIRED = 'Необходимо ввести пароль';
+module.exports.VALIDATION_MESSAGE_COUNTRY_REQUIRED = 'Необходимо указать страну создания фильма';
+module.exports.VALIDATION_MESSAGE_DIRECTOR_REQUIRED = 'Необходимо указать режиссера фильма';
+module.exports.VALIDATION_MESSAGE_DURATION_NOT_NUMBER = 'Значение длительности фильма не является числом';
+module.exports.VALIDATION_MESSAGE_DURATION_REQUIRED = 'Необходимо указать длительность фильма';
+module.exports.VALIDATION_MESSAGE_YEAR_REQUIRED = 'Необходимо указать год выпуска фильма';
+module.exports.VALIDATION_MESSAGE_DESCRIPTION_REQUIRED = 'Необходимо указать описание фильма';
+module.exports.VALIDATION_MESSAGE_INVALID_URL = 'Не валидный url-адрес';
+module.exports.VALIDATION_MESSAGE_IMAGE_REQUIRED = 'Необходимо указать ссылку на постер к фильму';
+module.exports.VALIDATION_MESSAGE_TRAILER_REQUIRED = 'Необходимо указать ссылку на трейлер фильма';
+module.exports.VALIDATION_MESSAGE_THUMBNAIL_REQUIRED = 'Необходимо указать ссылку на миниатюрное изображение постера к фильму';
+module.exports.VALIDATION_MESSAGE_MOVIE_ID_NOT_NUMBER = 'Id фильма не является числом';
+module.exports.VALIDATION_MESSAGE_MOVIE_ID_REQUIRED = 'Необходимо указать id фильма';
+module.exports.VALIDATION_MESSAGE_NAME_RU_REQUIRED = 'Необходимо указать название фильма на русском языке';
+module.exports.VALIDATION_MESSAGE_NAME_EN_REQUIRED = 'Необходимо указать название фильма на английском языке';
+module.exports.VALIDATION_MESSAGE_INVALID_MOVIE_ID = 'Невалидный id фильма';
